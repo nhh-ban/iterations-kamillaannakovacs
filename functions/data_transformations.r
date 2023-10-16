@@ -50,3 +50,29 @@ print(to_iso8601(as_datetime("2016-09-01 10:11:12"), 0))
 
 print(to_iso8601(as_datetime("2016-09-01 10:11:12"), -4))
 # Should print: [1] "2016-08-28T10:11:12Z"
+
+
+# Problem 5
+library(jsonlite)
+
+# 'transform_volumes' converts the JSON response from the Vegvesen API into a data frame suitable for plotting.
+#
+# @param json_data A string containing the JSON response from the Vegvesen API.
+# @return A data frame containing the volume data, ready for plotting.
+transform_volumes <- function(json_data) {
+  # Convert the JSON data to a list
+  data_list <- jsonlite::fromJSON(json_data)
+  
+  # Adjust the following code based on the actual structure of 'data_list'.
+  volumes_df <- data_list$trafficData$volume$byHour$edges %>% 
+    lapply(function(item) {
+      data.frame(
+        from = item$node$from,  
+        to = item$node$to,      
+        volume = item$node$total$volumeNumbers$volume,  
+        stringsAsFactors = FALSE
+      )
+    }) %>% bind_rows()
+
+  return(volumes_df)
+}
